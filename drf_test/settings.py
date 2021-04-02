@@ -61,6 +61,7 @@ MIDDLEWARE = [
 
 ELASTIC_APM = {
     'SERVICE_NAME': 'elastic-apm-test',
+    'SERVER_URL': config('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
     'DEBUG': True,
 }
 
