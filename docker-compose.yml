@@ -1,7 +1,7 @@
 version: '2.2'
 services:
   apm-server:
-    image: docker.elastic.co/apm/apm-server:7.6.0
+    image: docker.elastic.co/apm/apm-server:7.12.0
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -27,13 +27,14 @@ services:
       test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
     environment:
     - bootstrap.memory_lock=true
     - cluster.name=docker-cluster
     - cluster.routing.allocation.disk.threshold_enabled=false
     - discovery.type=single-node
-    - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    - xpack.ml.enabled=false
+    - ES_JAVA_OPTS=-XX:UseAVX=0 -Xms512m -Xmx512m
     ulimits:
       memlock:
         hard: -1
@@ -45,12 +46,12 @@ services:
     networks:
     - elastic
     healthcheck:
-      interval: 20s
-      retries: 10
+      interval: 200s
+      retries: 50
       test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.6.0
+    image: docker.elastic.co/kibana/kibana:7.12.0
     depends_on:
       elasticsearch:
         condition: service_healthy
