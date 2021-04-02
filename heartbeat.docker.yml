@@ -1,0 +1,11 @@
+heartbeat.monitors:
+- type: http
+  schedule: '@every 5s'
+  urls:
+    - http://app:8000/products/
+
+processors:
+- add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: 'http://elasticsearch:9200'

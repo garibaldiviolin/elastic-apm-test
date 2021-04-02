@@ -13,6 +13,20 @@ services:
     command: >
       bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:7.12.0
+    depends_on:
+      - app
+      - elasticsearch
+      - kibana
+    environment:
+      - setup.kibana.host=kibana:5601
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+    volumes:
+      - "./heartbeat.docker.yml:/usr/share/heartbeat/heartbeat.yml"
+    networks:
+      - elastic
+
   apm-server:
     image: docker.elastic.co/apm/apm-server:7.12.0
     depends_on:
